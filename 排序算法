@@ -1,0 +1,294 @@
+```
+#include <iostream>
+#include <algorithm>
+#include<vector>
+#include<string>
+using namespace std;
+
+//冒泡排序
+void BubbleSort(vector<int>&v){
+	int len = v.size();
+	bool orderly = false;
+	for (int i = 0; i < len - 1 && !orderly; i++){
+		orderly = true;
+		for (int j = 0; j < len - 1 - i; j++)
+			if (v[j]>v[j + 1]){
+				orderly = false;
+				swap(v[j], v[j + 1]);
+			}
+	}
+}
+
+//选择排序
+void SelectionSort(vector<int>&v){
+	int min, len = v.size();
+	for (int i = 0; i < len - 1; i++){
+		min = i;
+		for (int j = i + 1; j < len; j++)
+			if (v[j] < v[min])
+				min = j;
+		if (i != min)
+			swap(v[i], v[min]);
+	}
+}
+
+//插入排序
+void InsertSort(vector<int>&v){
+	int len = v.size();
+	for (int i = 1; i < len; i++){
+		int temp = v[i];
+		for (int j = i - 1; j >= 0; j--){
+			if (v[j]>temp){
+				v[j + 1] = v[j];
+				v[j] = temp;
+			}
+			else
+				break;
+		}
+	}
+}
+
+//快排
+void QuickSort(vector<int>&v, int low, int high){
+	if (low >= high)
+		return;
+	int first = low;
+	int last = high;
+	int key = v[first];
+	
+	while (first < last){
+		while (first < last && v[last] >= key)
+			last--;
+		if (first < last)
+			v[first++] = v[last];
+		while (first < last && v[first] <= key)
+			first++;
+		if (first < last)
+			v[last--] = v[first];
+	}
+	v[first] = key;
+	QuickSort(v, low, first - 1);
+	QuickSort(v, first + 1, high);
+}
+
+//堆排序
+void max_heapify(vector<int>&v, int start, int end){
+	int dad = start;
+	int son = dad * 2 + 1;
+	while (son <= end){
+		if (son + 1 <= end && v[son] < v[son + 1])
+			son++;
+		if (v[dad] > v[son])
+			return;
+		else{
+			swap(v[dad], v[son]);
+			dad = son;
+			son = dad * 2 + 1;
+		}
+	}
+}
+void heap_sort(vector<int>&v){
+	int len = v.size();
+	for (int i = len / 2 - 1; i >= 0; i--)
+		max_heapify(v, i, len - 1);
+	for (int i = len - 1; i > 0; i--){
+		swap(v[0], v[i]);
+		max_heapify(v, 0, i - 1);
+	}
+}
+
+//归并排序
+void merge_sort_recursive(vector<int>&v,vector<int>&res,int start,int end){
+	if (start >= end)
+		return;
+	int len = end - start, mid = (len >> 1) + start;
+	int start1 = start, end1 = mid;
+	int start2 = mid + 1, end2 = end;
+	merge_sort_recursive(v, res, start1, end1);
+	merge_sort_recursive(v, res, start2, end2);
+	int k = start;
+	while (start1 <= end1 && start2 <= end2)
+		res[k++] = v[start1] < v[start2] ? v[start1++] : v[start2++];
+	while (start1 <= end1)
+		res[k++] = v[start1++];
+	while (start2 <= end2)
+		res[k++] = v[start2++];
+	for (k = start; k <= end; k++)
+		v[k] = res[k];
+}
+void merge_sort(vector<int>&v){
+	int len = v.size();
+	vector<int>res = vector<int>(len);
+	merge_sort_recursive(v, res, 0, len - 1);
+}
+
+//希尔排序
+void shell_sort(vector<int>&v){
+	int len = v.size();
+	int h = 1;
+	while (h < len / 3)
+		h = 3 * h + 1;
+	cout << h << endl;
+	while (h >= 1){
+		for (int i = h; i < len; i++){
+			for (int j = i; j >= h && v[j] < v[j - h]; j -= h)
+				swap(v[j], v[j - h]);
+		}
+		h = h / 3;
+	}
+}
+
+//计数排序
+void CountSort(vector<int>& v, vector<int>& vec)
+{
+	if (v.size() == 0)
+		return;
+	int vecCountLength = (*max_element(begin(v), end(v))) + 1;
+	vector<int>vecCount(vecCountLength, 0);
+	for (int i = 0; i < v.size(); i++)
+		vecCount[v[i]]++;
+	for (int i = 1; i < vecCount.size(); i++)
+		vecCount[i] += vecCount[i - 1];
+	for (int i = v.size() - 1; i >= 0; i--)
+		vec[--vecCount[v[i]]] = v[i];
+}
+
+//桶排序
+const int BUCKET_NUM = 10;
+struct ListNode{
+	explicit ListNode(int i = 0) :mData(i), mNext(NULL){}
+	ListNode * mNext;
+	int mData;
+};
+ListNode* insert(ListNode*head, int val){
+	ListNode dummyNode;
+	ListNode *newNode = new ListNode(val);
+	ListNode *pre, *curr;
+	dummyNode.mNext = head;
+	pre = &dummyNode;
+	curr = head;
+	while (curr != NULL && curr->mData <= val){
+		pre = curr;
+		curr = curr->mNext;
+	}
+	newNode->mNext = curr;
+	pre->mNext = newNode;
+	return dummyNode.mNext;
+}
+ListNode* Merge(ListNode*head1, ListNode*head2){
+	ListNode dummyNode;
+	ListNode *dummy = &dummyNode;
+	while (head1 != NULL && head2 != NULL){
+		if (head1->mData <= head2->mData){
+			dummy->mNext = head1;
+			head1 = head1->mNext;
+		}
+		else{
+			dummy->mNext = head2;
+			head2 = head2->mNext;
+		}
+		dummy = dummy->mNext;
+	}
+	if (head1 != NULL)
+		dummy->mNext = head1;
+	if (head2 != NULL)
+		dummy->mNext = head2;
+	return dummyNode.mNext;
+}
+void BucketSort(vector<int>&v){
+	vector<ListNode*>buckets(BUCKET_NUM, (ListNode*)(0));
+	for (int i = 0; i < v.size(); i++){
+		int index = v[i] / BUCKET_NUM;
+		ListNode *head = buckets.at(index);
+		buckets.at(index) = insert(head, v[i]);
+	}
+	ListNode*head = buckets.at(0);
+	for (int i = 1; i < BUCKET_NUM; i++)
+		head = Merge(head, buckets.at(i));
+	for (int i = 0; i < v.size(); i++){
+		v[i] = head->mData;
+		head = head->mNext;
+	}
+}
+
+//基数排序
+int maxbit(int data[], int n) //辅助函数，求数据的最大位数
+{
+	int maxData = data[0];		///< 最大数
+	/// 先求出最大数，再求其位数，这样有原先依次每个数判断其位数，稍微优化点。
+	for (int i = 1; i < n; ++i)
+	{
+		if (maxData < data[i])
+			maxData = data[i];
+	}
+	int d = 1;
+	int p = 10;
+	while (maxData >= p)
+	{
+		//p *= 10; // Maybe overflow
+		maxData /= 10;
+		++d;
+	}
+	return d;
+	/*    int d = 1; //保存最大的位数
+	int p = 10;
+	for(int i = 0; i < n; ++i)
+	{
+	while(data[i] >= p)
+	{
+	p *= 10;
+	++d;
+	}
+	}
+	return d;*/
+}
+void radixsort(int data[], int n) //基数排序
+{
+	int d = maxbit(data, n);
+	int *tmp = new int[n];
+	int *count = new int[10]; //计数器
+	int i, j, k;
+	int radix = 1;
+	for (i = 1; i <= d; i++) //进行d次排序
+	{
+		for (j = 0; j < 10; j++)
+			count[j] = 0; //每次分配前清空计数器
+		for (j = 0; j < n; j++)
+		{
+			k = (data[j] / radix) % 10; //统计每个桶中的记录数
+			count[k]++;
+		}
+		for (j = 1; j < 10; j++)
+			count[j] = count[j - 1] + count[j]; //将tmp中的位置依次分配给每个桶
+		for (j = n - 1; j >= 0; j--) //将所有桶中记录依次收集到tmp中
+		{
+			k = (data[j] / radix) % 10;
+			tmp[count[k] - 1] = data[j];
+			count[k]--;
+		}
+		for (j = 0; j < n; j++) //将临时数组的内容复制到data中
+			data[j] = tmp[j];
+		radix = radix * 10;
+	}
+	delete[]tmp;
+	delete[]count;
+}
+
+int main() {
+	vector<int> v;
+	v.push_back(5);
+	v.push_back(7);
+	v.push_back(3);
+	v.push_back(2);
+	v.push_back(6);
+	v.push_back(1);
+	v.push_back(4);
+	BucketSort(v);
+	for (int i = 0; i < v.size(); i++)
+		cout << v[i] << ' ';
+	cout << endl;
+
+	system("PAUSE");
+	return 0;
+}
+```
