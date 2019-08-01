@@ -1,0 +1,66 @@
+#1.  前缀树
+class TrieNode:
+    def __init__(self):
+        self.links = {}
+        self.isEnd = False
+
+    def containKeys(self, ch):
+        if ch in self.links:
+            return True
+        return False
+
+    def getNode(self, ch):
+        return self.links[ch]
+
+    def setNode(self, ch, node):
+        self.links[ch] = node
+
+    def setEnd(self):
+        self.isEnd = True
+class Trie(TrieNode):
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        node = self.root
+        for i in range(len(word)):
+            if not node.containKeys(word[i]):
+                node.setNode(word[i], TrieNode())
+            node = node.getNode(word[i])
+        node.setEnd()
+
+    def searchPrefix(self, word):
+        node = self.root
+        for i in range(len(word)):
+            if not node.containKeys(word[i]):
+                return None
+            node = node.getNode(word[i])
+        return node
+
+    def search(self, word: str) -> bool:
+        node = self.searchPrefix(word)
+        if node is not None and node.isEnd:
+            return True
+        return False
+
+    def startsWith(self, prefix: str) -> bool:
+        node = self.searchPrefix(prefix)
+        if node is not None:
+            return True
+        return False
+
+#2. 深度优先遍历找环
+visited = [0 for i in range(numCourses)]
+def dfs(m):
+    if visited[m]==1:
+        return False
+    if visited[m]==2:
+        return True
+    visited[m]=2
+    for k in dp[m]:
+        if dfs(k):
+            return True
+    visited[m]=1
+    return False
+
+
