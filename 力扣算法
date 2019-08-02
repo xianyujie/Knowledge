@@ -1,4 +1,4 @@
-#前缀树
+### 前缀树
 class TrieNode:
     def __init__(self):
         self.links = {}
@@ -49,7 +49,7 @@ class Trie(TrieNode):
             return True
         return False
 
-# 深度优先遍历找环
+### 深度优先遍历找环
 visited = [0 for i in range(numCourses)]
 def dfs(m):
     if visited[m]==1:
@@ -63,7 +63,7 @@ def dfs(m):
     visited[m]=1
     return False
 
-#厄拉多塞筛法（求质数数量）
+###厄拉多塞筛法（求质数数量）
 #具体操作：先将 2~n 的各个数放入表中，
 # 然后在2的上面画一个圆圈，然后划去2的其他倍数；
 # 第一个既未画圈又没有被划去的数是3，将它画圈，再划去3的其他倍数；
@@ -86,14 +86,14 @@ def countPrimes(self, n: int) -> int:
         m += 1
     return res
 
-# 给定范围 [m, n]，其中 0 <= m <= n <= 2147483647，
+### 给定范围 [m, n]，其中 0 <= m <= n <= 2147483647，
 # 返回此范围内所有数字的按位与（包含 m, n 两端点）
 def rangeBitwiseAnd(self, m: int, n: int) -> int:
     while (n > m):
         n = n & (n - 1)
     return n
 
-# 买卖股票的最佳时机
+### 买卖股票的最佳时机
 # base case：
 # dp[-1][k][0] = dp[i][0][0] = 0
 # dp[-1][k][1] = dp[i][0][1] = -infinity
@@ -201,7 +201,7 @@ def maxProfit_K(prices,max_k):
                 dp[i][k][1] = max(dp[i - 1][k][1], dp[i - 1][k - 1][0] - prices[i])
     return dp[-1][-1][0]
 
-# LRU (最近最少使用) 缓存机制
+### LRU (最近最少使用) 缓存机制
 class LNode():
     def __init__(self):
         self.val = 0
@@ -262,7 +262,7 @@ class LRUCache():
             self._move_to_head(node)
             node.val = value
 
-# 单词拆分
+### 单词拆分
 # 给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，
 # 在字符串中增加空格来构建一个句子，使得句子中所有的单词都在词典中。
 # 返回所有这些可能的句子。
